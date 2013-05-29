@@ -1,0 +1,4 @@
+dependencies.txt
+json-simple-1.1.1.jar
+junit-4.10-sources.jar
+mockito-all-1.9.5.jar

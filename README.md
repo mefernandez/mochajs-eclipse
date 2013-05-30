@@ -18,7 +18,7 @@ The easy way would be:
 5. Right-click Run As JUnit.
 6. Enjoy.
 
-![A screen capture of Eclipse's JUnit view running Mocha tests](doc/eclipse-junit-view-png "Eclipse's JUnit view running Mocha tests")
+![A screen capture of Eclipse's JUnit view running Mocha tests](doc/eclipse-junit-view.png "Eclipse's JUnit view running Mocha tests")
 
 
 Of course, this is a super-hack. It's not what it's supposed to be, but hey, it's a good start!

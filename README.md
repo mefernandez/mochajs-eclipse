@@ -2,9 +2,8 @@ mochajs-eclipse
 ===============
 
 Do you want to unit test your Node.js JavaScript inside Eclipse with Mocha.js?
+
 Look no further.
-
-
 
 Get started
 -----------
@@ -23,6 +22,15 @@ The easy way would be:
 
 Of course, this is a super-hack. It's not what it's supposed to be, but hey, it's a good start!
 The idea is from http://js-testrunner.codehaus.org/index.html, which runs browser-side JavaScript with Phantom.js
+
+Known issues
+------------
+
+A word of warning: If your JavaScript code/tests write to the standard output, it will break the runner.
+This happens because Mocha.js results also get written to STDOUT, and if it gets mixed with other stuff then the runner can't parse the results.
+There are a number of [issues opened in Mocha.js](https://github.com/visionmedia/mocha/pull/469) about writing results to a file instead of STDOUT, 
+but so far Mr. TJ Hollowaychuck has kept things as they are.   
+
 
 Ok, now let's do it the way it should be
 ----------------------------------------

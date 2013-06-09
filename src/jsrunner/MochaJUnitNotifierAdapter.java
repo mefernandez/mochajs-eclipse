@@ -34,7 +34,10 @@ public class MochaJUnitNotifierAdapter {
 					String title = (String) ((JSONObject)failures.get(i)).get("fullTitle");
 					Description description = Description.createTestDescription(this.getClass(), title);
 					notifier.fireTestStarted(description);
-					Failure failure = new Failure(description, new Exception("A test failed apparently"));
+					String errorMsg = (String) ((JSONObject)failures.get(i)).get("errorMessage");
+					if (errorMsg == null)
+						errorMsg = "A test failed but no error description can be found";
+					Failure failure = new Failure(description, new Exception(errorMsg));
 					notifier.fireTestFailure(failure);
 					notifier.fireTestFinished(description);
 				}

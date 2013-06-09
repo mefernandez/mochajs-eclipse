@@ -5,7 +5,8 @@ import jsrunner.MochaTestRunner.TestsFolder;
 import org.junit.runner.RunWith;
 
 @RunWith(MochaTestRunner.class)
-@TestsFolder("mocha-tests")
+@TestsFolder("test-mocha")
+//@TestsFolder("/Users/mariano/git/unitdd/backend/test")
 public class MochaTestSuiteWithAnotation {
 
 }

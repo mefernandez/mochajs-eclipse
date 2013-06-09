@@ -79,14 +79,6 @@ public class MochaJSONTestsResultsTest {
 	}
 
 	@Test
-	public void findAllTestsInsideTestFolder() throws Exception {
-		MochaTestRunner runner = new MochaTestRunner(MochaTestSuite.class);
-		File[] tests = runner.getChildren().toArray(new File[0]);
-		assertEquals(new File("test/mochatest.js").getAbsolutePath(), tests[0].getAbsolutePath());
-		assertEquals(new File("test/mochatest2.js").getAbsolutePath(), tests[1].getAbsolutePath());
-	}
-
-	@Test
 	public void runTest() throws Exception {
 		MochaTestRunner runner = new MochaTestRunner(MochaTestSuite.class);
 		File test = new File("test/mochatest.js");

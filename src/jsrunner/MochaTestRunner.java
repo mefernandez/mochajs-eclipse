@@ -2,18 +2,18 @@ package jsrunner;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.runner.Description;
+import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.ParentRunner;
-import org.junit.runners.model.InitializationError;
 
 /**
  * Based on a solution I've seen at:
@@ -31,11 +31,13 @@ import org.junit.runners.model.InitializationError;
  * </code>
  * @author mariano
  */
-public class MochaTestRunner extends ParentRunner<File> {
+public class MochaTestRunner extends Runner {
 	
-	File[] testFolders;
-	MochaProcess mocha;
-	MochaJUnitNotifierAdapter adapter;
+	File testFolders[];
+	MochaResultsDescriptionBuilder descriptionBuilder;
+	MochaProcess mochaProcess;
+	List<String> savedResults;
+	RunNotifierReplayer notifierReplayer;
 	
 	/**
 	 * Describes where are the tests in relation to the project home folder.
@@ -49,11 +51,13 @@ public class MochaTestRunner extends ParentRunner<File> {
 		String[] value();
 	}
 
-	public MochaTestRunner(Class<?> testClass) throws InitializationError {
-		super(testClass);
+	public MochaTestRunner(Class testClass) {
+		setupTestFolder(testClass);
+	}
 
+	void setupTestFolder(Class testClass) {
 		// Set up our resource bases.
-		TestsFolder resourceBaseAnnotation = testClass.getAnnotation(TestsFolder.class);
+		TestsFolder resourceBaseAnnotation = (TestsFolder)testClass.getAnnotation(TestsFolder.class);
 		if (resourceBaseAnnotation == null) {
 			testFolders = new File[] { new File("test") };
 		} else {
@@ -64,36 +68,51 @@ public class MochaTestRunner extends ParentRunner<File> {
 			} 
 		}
 		
+		descriptionBuilder = new MochaResultsDescriptionBuilder();
+		mochaProcess = new MochaProcess();
+		savedResults = new ArrayList<String>();
 	}
 
 	@Override
-	protected Description describeChild(File test) {
-		Description description = Description.createSuiteDescription(test.getName());
-		return description;
-	}
-
-	@Override
-	protected List<File> getChildren() {
-		List<File> children = Arrays.asList(testFolders[0].listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".js");
+	public Description getDescription() {
+		notifierReplayer = new RunNotifierReplayer();
+		Description topSuite = Description.createSuiteDescription("All tests inside");
+		for (int i = 0; i < testFolders.length; i++) {
+			File folder = testFolders[i];
+			Description folderDescription = Description.createSuiteDescription(folder.getAbsolutePath());
+			topSuite.addChild(folderDescription);
+			File[] testFiles = folder.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".js");
+				}
+			});
+			
+			for (int j = 0; j < testFiles.length; j++) {
+				File test = testFiles[j];
+				String mochaResults;
+				try {
+					mochaResults = mochaProcess.run(test);
+					savedResults.add(mochaResults);
+					String suiteName = test.getName();
+					Description testDescription = descriptionBuilder.buildDescription(suiteName, mochaResults, notifierReplayer);
+					folderDescription.addChild(testDescription);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-		}));
-		return children;
+		}
+		return topSuite;
 	}
 
 	@Override
-	protected void runChild(File test, RunNotifier notifier) {
-		try {
-			mocha = new MochaProcess();
-			String mochaResults = mocha.run(test);
-			adapter = new MochaJUnitNotifierAdapter();
-			adapter.notify(mochaResults, notifier);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+	public void run(RunNotifier notifier) {
+		notifierReplayer.replay(notifier);
+		notifierReplayer = null;
 	}
-
+	
 }

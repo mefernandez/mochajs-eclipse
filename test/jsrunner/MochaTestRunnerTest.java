@@ -11,7 +11,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-public class MochaFullTestRunnerTest {
+public class MochaTestRunnerTest {
 	
 	String mochaResults = "{\n" + 
 			"  \"stats\": {\n" + 
@@ -54,9 +54,9 @@ public class MochaFullTestRunnerTest {
 
 	@Test
 	public void constructorSetsUpTestFolderFromAnnotationInJavaClass() {
-		Class testClass = MochaFullTestSuite.class;
-		MochaFullTestRunner runner = new MochaFullTestRunner(testClass);
-		File expected = new File("test");
+		Class testClass = MochaTestSuite.class;
+		MochaTestRunner runner = new MochaTestRunner(testClass);
+		File expected = new File("test-mocha");
 		assertEquals(expected.getAbsolutePath(), runner.testFolders[0].getAbsolutePath());
 	}
 

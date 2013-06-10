@@ -12,21 +12,21 @@ The easy way would be:
 
 1. Clone this repo.
 2. Import this as Existing Project inside Eclipse.
-3. Find MochaTestSuiteWithAnnotation Java class inside test/jsrunner directory.
-4. Change the value of @TestsFolder("path-to-my-mocha-test-folder") annotation and point it to yout Mocha.js test folder.
+3. Find MochaTestSuite Java class inside test-mocha/jsrunner directory.
+4. Change the value of @TestsFolder("test-mocha") annotation and point it to your Mocha.js test folder.
 5. Right-click Run As JUnit.
 6. Enjoy.
 
-![A screen capture of Eclipse's JUnit view running Mocha tests](doc/eclipse-junit-view.png "Eclipse's JUnit view running Mocha tests")
+![A screen capture of Eclipse's JUnit view running Mocha tests](doc/eclipse-junit-view-2.png "Eclipse's JUnit view running Mocha tests")
 
 
 Of course, this is a super-hack. It's not what it's supposed to be, but hey, it's a good start!
-The idea is from http://js-testrunner.codehaus.org/index.html, which runs browser-side JavaScript with Phantom.js
+I saw something like this here: http://js-testrunner.codehaus.org/index.html, which runs browser-side JavaScript with Phantom.js
 
 Known issues
 ------------
 
-A word of warning: If your JavaScript code/tests write to the standard output, it will break the runner.
+*A word of warning*: If your JavaScript code/tests write to the standard output, it will break the runner.
 This happens because Mocha.js results also get written to STDOUT, and if it gets mixed with other stuff then the runner can't parse the results.
 There are a number of [issues opened in Mocha.js](https://github.com/visionmedia/mocha/pull/469) about writing results to a file instead of STDOUT, 
 but so far Mr. TJ Hollowaychuck has kept things as they are.   
